@@ -1,7 +1,10 @@
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType, Events, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
 // Load from environment variables first, fall back to config.json
-let token, staffRoleId, highStaffRoleId;
+let token = process.env.TOKEN;
+let staffRoleId = process.env.staffRoleId;
+let highStaffRoleId = process.env.highStaffRoleId;
+
 
 if (process.env.TOKEN) {
   // Running on Railway or similar
