@@ -1,10 +1,9 @@
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType, Events, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
-// Load from environment variables first, fall back to config.json
+// Load from environment variables first, fall back to config.json safely
 let token = process.env.TOKEN;
 let staffRoleId = process.env.staffRoleId;
 let highStaffRoleId = process.env.highStaffRoleId;
-
 
 if (process.env.TOKEN) {
   // Running on Railway or similar
@@ -12,12 +11,17 @@ if (process.env.TOKEN) {
   staffRoleId = process.env.staffRoleId;
   highStaffRoleId = process.env.highStaffRoleId;
 } else {
-  // Running locally
-  const config = require('./config.json');
-  token = config.token;
-  staffRoleId = config.staffRoleId;
-  highStaffRoleId = config.highStaffRoleId;
+  // Running locally - try to load config.json safely if it exists
+  try {
+    const config = require('./config.json');
+    token = config.token;
+    staffRoleId = config.staffRoleId;
+    highStaffRoleId = config.highStaffRoleId;
+  } catch (err) {
+    console.log('⚠️ קובץ config.json לא נמצא, משתמש רק ב-Environment Variables.');
+  }
 }
+
 
 const HELP_CHANNEL_ID = '1550239568551485530';
 const XP_CHECK_CHANNEL_ID = '1550377572158804088';
