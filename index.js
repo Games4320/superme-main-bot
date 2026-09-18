@@ -376,7 +376,7 @@ client.once(Events.ClientReady, async () => {
 
       const embed = new EmbedBuilder()
         .setColor(0xFF6B00)
-        .setTitle('# Superme Xp shop');
+        .setTitle('# TornadoSMP Xp shop');
 
       let shopText = '**תבחרו את הרול שבא לכם, ותקנו אותו!**\n\n';
       for (let i = 0; i < SHOP_ROLES.length; i++) {
@@ -486,7 +486,7 @@ client.once(Events.ClientReady, async () => {
         .setTitle('בחינות לצוות זמינות!')
         .setDescription('**תגישו טופס! ואולי תתקבלו!**')
         .addFields(
-          { name: '****תנאי קבלה:****', value: '`1. בגרות ואחראיות מלאה`\n\n`2. גיל 13+`\n\n`3. להיות אחד שבאמת רוצה לקדם את השרת.`', inline: false },
+          { name: '****תנאי קבלה:****', value: '`1. בגרות ואחראיות מלאה`\n\n`2. גיל 12+`\n\n`3. להיות אחד שבאמת רוצה לקדם את השרת.`', inline: false },
           { name: '\u200B', value: 'אזזז למה אתם מחכים? תתחילו בחינה!', inline: false },
           { name: '\u200B', value: 'כדי להתחיל בחינה יש ללחוץ על הכפתור למטה!', inline: false }
         );
