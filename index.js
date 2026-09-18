@@ -50,11 +50,11 @@ const TICKET_CATEGORIES = [
 ];
 
 const SHOP_ROLES = [
-  { roleId: '1541492934258720935', cost: 10000 },
-  { roleId: '1541492934258720936', cost: 15000 },
-  { roleId: '1541492934258720937', cost: 20000 },
-  { roleId: '1541492934258720938', cost: 25000 },
-  { roleId: '1541492934258720939', cost: 30000 }
+  { roleId: '1549087896105914378', cost: 10000 },
+  { roleId: '1549087894038388788', cost: 15000 },
+  { roleId: '1549087892976963746', cost: 20000 },
+  { roleId: '1549087890405851148', cost: 25000 },
+:
 ];
 
 const client = new Client({
