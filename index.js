@@ -53,7 +53,7 @@ const SHOP_ROLES = [
   { roleId: '1549087896105914378', cost: 10000 },
   { roleId: '1549087894038388788', cost: 15000 },
   { roleId: '1549087892976963746', cost: 20000 },
-  { roleId: '1549087890405851148', cost: 
+  { roleId: '1549087890405851148', cost: 25000 },
 ];
 
 const client = new Client({
