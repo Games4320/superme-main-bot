@@ -447,7 +447,7 @@ client.once(Events.ClientReady, async () => {
 
       const embed = new EmbedBuilder()
         .setColor(0x0099FF)
-        .setTitle('Superme Ticket System')
+        .setTitle('TornadoSMP Ticket System')
         .setDescription('בחר קטגוריה כדי לפתוח טיקט');
 
       const ticketMenu = new StringSelectMenuBuilder()
@@ -549,7 +549,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
           const embed = new EmbedBuilder()
             .setColor(0xFF6B00)
-            .setTitle('# Superme Xp shop');
+            .setTitle('# ShadowSMP Xp shop');
 
           let shopText = '**תבחרו את הרול שבא לכם, ותקנו אותו!**\n\n';
           for (let i = 0; i < SHOP_ROLES.length; i++) {
