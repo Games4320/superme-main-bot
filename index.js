@@ -40,7 +40,6 @@ const TICKET_CATEGORIES = [
   { id: 'general_question', label: 'שאלה כללית', allowedRoles: [staffRoleId, highStaffRoleId] },
   { id: 'other', label: 'אחר', allowedRoles: [staffRoleId, highStaffRoleId] },
   { id: 'management_appeal', label: 'פנייה להנהלה', allowedRoles: [MANAGEMENT_ROLE_ID] },
-  { id: 'staff_exam', label: 'בחינות לצוות', allowedRoles: [SPECIALIST_ROLE_ID] }
 ];
 
 const SHOP_ROLES = [
@@ -1734,7 +1733,7 @@ client.on(Events.InteractionCreate, async interaction => {
       );
 
     const row = new ActionRowBuilder().addComponents(buyMenu);
-    await interaction.editReply({ components: [row] });
+    await interaction.editReply({ content: '**בחר רול לקנייה:**', components: [row] });
     return;
   }
 
@@ -1753,7 +1752,7 @@ client.on(Events.InteractionCreate, async interaction => {
       );
 
     const row = new ActionRowBuilder().addComponents(refundMenu);
-    await interaction.editReply({ components: [row] });
+    await interaction.editReply({ content: '**בחר רול להחזרה:**', components: [row] });
     return;
   }
 
