@@ -2426,14 +2426,6 @@ client.on(Events.MessageCreate, async message => {
     }
 
     try {
-      const embed = new EmbedBuilder()
-        .setColor(0xFF6B00)
-        .setTitle('צרוך עזרה!')
-        .setDescription('המשתמש אינו מצליח בשיחה 🔔\n\nסיבה:\n**' + reason + '**')
-        .addFields(
-          { name: 'זמינה בשיחה:', value: voiceChannelLink, inline: false }
-        );
-
       const claimButton = new ButtonBuilder()
         .setCustomId(`help_claim_${message.id}`)
         .setLabel('Claim')
@@ -2441,9 +2433,14 @@ client.on(Events.MessageCreate, async message => {
 
       const row = new ActionRowBuilder().addComponents(claimButton);
 
+      let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}>\n`;
+      mentionText += `צרוך עזרה!\n\n`;
+      mentionText += `${reason}\n\n`;
+      mentionText += `המשתמש אינו מצליח בשיחה 🔔\n`;
+      mentionText += `סיבה: **${reason}**`;
+
       const helpMsg = await message.channel.send({
-        embeds: [embed],
-        content: `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}>`,
+        content: mentionText,
         components: [row],
         allowedMentions: { parse: ['roles', 'users'] }
       });
