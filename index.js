@@ -2566,14 +2566,6 @@ client.on(Events.MessageCreate, async message => {
         `**משתמש:** <@${userId}>\n**כמות:** ${amount}\n**ערוץ:** <#${message.channelId}>`,
         0xE74C3C
       );
-      
-      setTimeout(async () => {
-        try {
-          await confirmation.delete();
-        } catch (err) {
-          console.error('Failed to delete confirmation:', err);
-        }
-      }, 3000);
     } catch (err) {
       console.error('Failed to clear messages:', err);
       message.reply('❌ אירעה שגיאה בעת מחיקת ההודעות.').then(msg => {
