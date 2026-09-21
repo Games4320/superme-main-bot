@@ -2582,7 +2582,6 @@ client.on(Events.MessageCreate, async message => {
     }
     return;
   }
-  }
 
   // Say command
   if (message.content.startsWith('!say')) {
