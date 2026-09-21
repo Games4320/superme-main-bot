@@ -2580,6 +2580,8 @@ client.on(Events.MessageCreate, async message => {
         setTimeout(() => msg.delete().catch(() => {}), 3000);
       });
     }
+    return;
+  }
   }
 
   // Say command
