@@ -2432,7 +2432,7 @@ client.on(Events.MessageCreate, async message => {
         voiceStatus = `המשתמש נמצא בשיחה 🔔`;
       }
 
-      let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}> צריך אותכם!\n\n`;
+      let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}> צריך אותכם!\n`;
       mentionText += `${voiceStatus}\n`;
       mentionText += `סיבה: \`${reason}\``;
 
