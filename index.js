@@ -1052,7 +1052,9 @@ client.on(Events.InteractionCreate, async interaction => {
   }
 
   if (interaction.isStringSelectMenu()) {
-    if (interaction.customId === 'ticket_category_select') {
+    const customId = interaction.customId;
+
+    if (customId === 'ticket_category_select') {
       await interaction.deferReply({ ephemeral: true }).catch(() => {});
 
       const categoryId = interaction.values[0];
