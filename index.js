@@ -1,7 +1,9 @@
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType, Events, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 
-// Load from environment variables first, fall back to config.json
-let token, staffRoleId, highStaffRoleId;
+// Load from environment variables first, fall back to config.json safely
+let token = process.env.TOKEN;
+let staffRoleId = process.env.staffRoleId;
+let highStaffRoleId = process.env.highStaffRoleId;
 
 if (process.env.TOKEN) {
   // Running on Railway or similar
@@ -9,29 +11,34 @@ if (process.env.TOKEN) {
   staffRoleId = process.env.staffRoleId;
   highStaffRoleId = process.env.highStaffRoleId;
 } else {
-  // Running locally
-  const config = require('./config.json');
-  token = config.token;
-  staffRoleId = config.staffRoleId;
-  highStaffRoleId = config.highStaffRoleId;
+  // Running locally - try to load config.json safely if it exists
+  try {
+    const config = require('./config.json');
+    token = config.token;
+    staffRoleId = config.staffRoleId;
+    highStaffRoleId = config.highStaffRoleId;
+  } catch (err) {
+    console.log('⚠️ קובץ config.json לא נמצא, משתמש רק ב-Environment Variables.');
+  }
 }
 
-const HELP_CHANNEL_ID = '1550239568551485530';
-const XP_CHECK_CHANNEL_ID = '1550377572158804088';
-const XP_SHOP_CHANNEL_ID = '1550456007015010427';
-const TICKET_SETUP_CHANNEL_ID = '1549855124237590690';
-const VETERAN_CHANNEL_ID = '1541492936724971558';
-const LOGS_CHANNEL_ID = '1541492941795889301';
-const AGE_CHECK_ROLE_ID = '1550414404531654727';
-const STAFF_APP_CHANNEL_ID = '1550459563730276453';
+
+const HELP_CHANNEL_ID = '1549087989999865927';
+const XP_CHECK_CHANNEL_ID = '1550593141717860362';
+const XP_SHOP_CHANNEL_ID = '1549087934572007514';
+const TICKET_SETUP_CHANNEL_ID = '1549087980390580424';
+const VETERAN_CHANNEL_ID = '1550593761686589490';
+const LOGS_CHANNEL_ID = '1549088024678240339';
+const AGE_CHECK_ROLE_ID = '1550600311943462972';
+const STAFF_APP_CHANNEL_ID = '1550584433718071447';
 const COOLDOWN_DURATION = 30 * 1000;
 const XP_PER_MESSAGE = 2;
 const XP_PER_VOICE_MINUTE = 4;
 const VOICE_XP_INTERVAL = 60000;
-const VETERAN_DAYS = 85;
+const VETERAN_DAYS = 90;
 
-const MANAGEMENT_ROLE_ID = '1541492934405398528';
-const SPECIALIST_ROLE_ID = '1541492934376165400';
+const MANAGEMENT_ROLE_ID = '1549087871321903114';
+const SPECIALIST_ROLE_ID = '1550753075717865532';
 
 // Ticket categories
 const TICKET_CATEGORIES = [
@@ -43,11 +50,10 @@ const TICKET_CATEGORIES = [
 ];
 
 const SHOP_ROLES = [
-  { roleId: '1541492934258720935', cost: 10000 },
-  { roleId: '1541492934258720936', cost: 15000 },
-  { roleId: '1541492934258720937', cost: 20000 },
-  { roleId: '1541492934258720938', cost: 25000 },
-  { roleId: '1541492934258720939', cost: 30000 }
+  { roleId: '1550807020171431976', cost: 10000 },
+  { roleId: '1549087894038388788', cost: 15000 },
+  { roleId: '1549087892976963746', cost: 20000 },
+  { roleId: '1550806888554303488', cost: 25000 },
 ];
 
 const client = new Client({
@@ -370,7 +376,7 @@ client.once(Events.ClientReady, async () => {
 
       const embed = new EmbedBuilder()
         .setColor(0xFF6B00)
-        .setTitle('# Superme Xp shop');
+        .setTitle('# TornadoSMP Xp shop');
 
       let shopText = '**תבחרו את הרול שבא לכם, ותקנו אותו!**\n\n';
       for (let i = 0; i < SHOP_ROLES.length; i++) {
@@ -441,7 +447,7 @@ client.once(Events.ClientReady, async () => {
 
       const embed = new EmbedBuilder()
         .setColor(0x0099FF)
-        .setTitle('Superme Ticket System')
+        .setTitle('TornadoSMP Ticket System')
         .setDescription('בחר קטגוריה כדי לפתוח טיקט');
 
       const ticketMenu = new StringSelectMenuBuilder()
@@ -480,7 +486,7 @@ client.once(Events.ClientReady, async () => {
         .setTitle('בחינות לצוות זמינות!')
         .setDescription('**תגישו טופס! ואולי תתקבלו!**')
         .addFields(
-          { name: '****תנאי קבלה:****', value: '`1. בגרות ואחראיות מלאה`\n\n`2. גיל 13+`\n\n`3. להיות אחד שבאמת רוצה לקדם את השרת.`', inline: false },
+          { name: '****תנאי קבלה:****', value: '`1. בגרות ואחראיות מלאה`\n\n`2. גיל 12+`\n\n`3. להיות אחד שבאמת רוצה לקדם את השרת.`', inline: false },
           { name: '\u200B', value: 'אזזז למה אתם מחכים? תתחילו בחינה!', inline: false },
           { name: '\u200B', value: 'כדי להתחיל בחינה יש ללחוץ על הכפתור למטה!', inline: false }
         );
@@ -543,7 +549,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
           const embed = new EmbedBuilder()
             .setColor(0xFF6B00)
-            .setTitle('# Superme Xp shop');
+            .setTitle('# ShadowSMP Xp shop');
 
           let shopText = '**תבחרו את הרול שבא לכם, ותקנו אותו!**\n\n';
           for (let i = 0; i < SHOP_ROLES.length; i++) {
