@@ -2428,10 +2428,10 @@ client.on(Events.MessageCreate, async message => {
     try {
       const embed = new EmbedBuilder()
         .setColor(0xFF6B00)
-        .setTitle('בקשת עזרה חדשה')
+        .setTitle('צרוך עזרה!')
+        .setDescription('המשתמש אינו מצליח בשיחה 🔔\n\nסיבה:\n**' + reason + '**')
         .addFields(
-          { name: 'סיבה:', value: reason, inline: true },
-          { name: 'שיחה:', value: voiceChannelLink, inline: true }
+          { name: 'זמינה בשיחה:', value: voiceChannelLink, inline: false }
         );
 
       const claimButton = new ButtonBuilder()
