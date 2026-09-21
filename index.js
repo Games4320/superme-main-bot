@@ -85,6 +85,13 @@ const SPAM_THRESHOLD = 5; // 5 messages
 const SPAM_TIME_WINDOW = 5000; // in 5 seconds
 const MANAGER_ROLE_ID = '1541492934405398535';
 
+// Helper function to check if user has staff permissions (including admins)
+function hasStaffPermission(member) {
+  return member.roles.cache.has(staffRoleId) || 
+         member.roles.cache.has(highStaffRoleId) || 
+         member.permissions.has(PermissionFlagsBits.Administrator);
+}
+
 // Helper function to send logs
 async function sendLog(title, description, color = 0x0099FF) {
   try {
@@ -765,10 +772,9 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
         const member = await interaction.guild.members.fetch(interaction.user.id);
-        const hasStaffRole = member.roles.cache.has(staffRoleId) || member.roles.cache.has(highStaffRoleId);
 
-        if (!hasStaffRole) {
-          await interaction.editReply({ content: 'רק Staff ו High Staff יכולים להשתמש בפקודה הזו.' });
+        if (!hasStaffPermission(member)) {
+          await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים להשתמש בפקודה הזו.' });
           return;
         }
 
@@ -807,10 +813,9 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
         const member = await interaction.guild.members.fetch(interaction.user.id);
-        const hasStaffRole = member.roles.cache.has(staffRoleId) || member.roles.cache.has(highStaffRoleId);
 
-        if (!hasStaffRole) {
-          await interaction.editReply({ content: 'רק Staff ו High Staff יכולים להשתמש בפקודה הזו.' });
+        if (!hasStaffPermission(member)) {
+          await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים להשתמש בפקודה הזו.' });
           return;
         }
 
@@ -866,10 +871,9 @@ client.on(Events.InteractionCreate, async interaction => {
         await interaction.deferReply({ ephemeral: true });
 
         const member = await interaction.guild.members.fetch(interaction.user.id);
-        const hasStaffRole = member.roles.cache.has(staffRoleId) || member.roles.cache.has(highStaffRoleId);
 
-        if (!hasStaffRole) {
-          await interaction.editReply({ content: 'רק Staff ו High Staff יכולים להשתמש בפקודה הזו.' });
+        if (!hasStaffPermission(member)) {
+          await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים להשתמש בפקודה הזו.' });
           return;
         }
 
@@ -1275,11 +1279,9 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    const hasStaffRole = member.roles.cache.has(staffRoleId);
-    const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
 
-    if (!hasStaffRole && !hasHighStaffRole) {
-      await interaction.editReply({ content: 'רק Staff ו High Staff יכולים ללחוץ על כפתור זה!' });
+    if (!hasStaffPermission(member)) {
+      await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים ללחוץ על כפתור זה!' });
       return;
     }
 
@@ -1406,12 +1408,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const channelId = customId.replace('ticket_add_user_', '');
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    
-    const hasStaffRole = member.roles.cache.has(staffRoleId);
-    const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
 
-    if (!hasStaffRole && !hasHighStaffRole) {
-      await interaction.editReply({ content: 'רק Staff ו High Staff יכולים להשתמש בכפתור הזה!' });
+    if (!hasStaffPermission(member)) {
+      await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים להשתמש בכפתור הזה!' });
       return;
     }
     
@@ -1437,12 +1436,9 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const channelId = customId.replace('ticket_remove_user_', '');
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    
-    const hasStaffRole = member.roles.cache.has(staffRoleId);
-    const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
 
-    if (!hasStaffRole && !hasHighStaffRole) {
-      await interaction.editReply({ content: 'רק Staff ו High Staff יכולים להשתמש בכפתור הזה!' });
+    if (!hasStaffPermission(member)) {
+      await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים להשתמש בכפתור הזה!' });
       return;
     }
     
@@ -1469,12 +1465,9 @@ client.on(Events.InteractionCreate, async interaction => {
     const channelId = customId.replace('ticket_close_', '');
     const channel = client.channels.cache.get(channelId);
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    
-    const hasStaffRole = member.roles.cache.has(staffRoleId);
-    const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
 
-    if (!hasStaffRole && !hasHighStaffRole) {
-      await interaction.editReply({ content: 'רק Staff ו High Staff יכולים לסגור טיקט!' });
+    if (!hasStaffPermission(member)) {
+      await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים לסגור טיקט!' });
       return;
     }
 
@@ -1794,12 +1787,9 @@ client.on(Events.InteractionCreate, async interaction => {
       const userId = customId.replace('staffapp_approve_', '');
       const member = await interaction.guild.members.fetch(interaction.user.id);
       
-      // Only staff and high staff can approve
-      const hasStaffRole = member.roles.cache.has(staffRoleId);
-      const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
-
-      if (!hasStaffRole && !hasHighStaffRole) {
-        await interaction.editReply({ content: 'רק Staff ו High Staff יכולים לאשר בקשות!' });
+      // Only staff, high staff, and admins can approve
+      if (!hasStaffPermission(member)) {
+        await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים לאשר בקשות!' });
         return;
       }
 
@@ -1870,12 +1860,9 @@ client.on(Events.InteractionCreate, async interaction => {
       const userId = customId.replace('staffapp_reject_', '');
       const member = await interaction.guild.members.fetch(interaction.user.id);
       
-      // Only staff and high staff can reject
-      const hasStaffRole = member.roles.cache.has(staffRoleId);
-      const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
-
-      if (!hasStaffRole && !hasHighStaffRole) {
-        await interaction.editReply({ content: 'רק Staff ו High Staff יכולים לדחות בקשות!' });
+      // Only staff, high staff, and admins can reject
+      if (!hasStaffPermission(member)) {
+        await interaction.editReply({ content: 'רק Staff, High Staff ו-Administrators יכולים לדחות בקשות!' });
         return;
       }
 
@@ -2114,10 +2101,8 @@ client.on(Events.InteractionCreate, async interaction => {
     }
 
     const member = await interaction.guild.members.fetch(interaction.user.id);
-    const hasStaffRole = member.roles.cache.has(staffRoleId);
-    const hasHighStaffRole = member.roles.cache.has(highStaffRoleId);
 
-    if (!hasStaffRole && !hasHighStaffRole) {
+    if (!hasStaffPermission(member)) {
       await interaction.editReply({ content: 'אין לך גישה מתאימה.' });
       return;
     }
@@ -2558,9 +2543,8 @@ client.on(Events.MessageCreate, async message => {
   // Clear command
   if (message.content.startsWith('!clear')) {
     const member = await message.guild.members.fetch(message.author.id);
-    const isHighStaff = member.roles.cache.has(highStaffRoleId);
 
-    if (!isHighStaff) {
+    if (!hasStaffPermission(member)) {
       await sendLog(
         '🚫 ניסיון כניסה לא מורשה',
         `**משתמש:** <@${userId}>\n**פקודה:** !clear\n**ערוץ:** <#${message.channelId}>\n**סיבה:** אין הרשאות`,
@@ -2605,10 +2589,8 @@ client.on(Events.MessageCreate, async message => {
   // Say command
   if (message.content.startsWith('!say')) {
     const member = await message.guild.members.fetch(message.author.id);
-    const isHighStaff = member.roles.cache.has(highStaffRoleId);
-    const isAdmin = member.permissions.has(PermissionFlagsBits.Administrator);
 
-    if (!isHighStaff && !isAdmin) {
+    if (!hasStaffPermission(member)) {
       await sendLog(
         '🚫 ניסיון כניסה לא מורשה',
         `**משתמש:** <@${userId}>\n**פקודה:** !say\n**ערוץ:** <#${message.channelId}>\n**סיבה:** אין הרשאות`,
