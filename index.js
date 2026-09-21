@@ -2439,7 +2439,7 @@ client.on(Events.MessageCreate, async message => {
       }
 
       let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}> צריך אותכם!\n\n`;
-      mentionText += `${voiceStatus}\n\n`;
+      mentionText += `${voiceStatus}\n`;
       mentionText += `סיבה: \`${reason}\``;
 
       const helpMsg = await message.channel.send({
