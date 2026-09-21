@@ -2433,11 +2433,14 @@ client.on(Events.MessageCreate, async message => {
 
       const row = new ActionRowBuilder().addComponents(claimButton);
 
-      let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}>\n`;
-      mentionText += `צרוך עזרה!\n\n`;
-      mentionText += `${reason}\n\n`;
-      mentionText += `המשתמש אינו מצליח בשיחה 🔔\n`;
-      mentionText += `סיבה: **${reason}**`;
+      let voiceStatus = 'המשתמש אינו נמצא בשיחה';
+      if (message.member.voice.channel) {
+        voiceStatus = `המשתמש נמצא בשיחה 🔔`;
+      }
+
+      let mentionText = `<@&${staffRoleId}> <@&${highStaffRoleId}> <@${userId}> צריך אותכם!\n\n`;
+      mentionText += `${voiceStatus}\n\n`;
+      mentionText += `סיבה: \`${reason}\``;
 
       const helpMsg = await message.channel.send({
         content: mentionText,
