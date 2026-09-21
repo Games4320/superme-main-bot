@@ -2557,13 +2557,21 @@ client.on(Events.MessageCreate, async message => {
     }
 
     try {
-      await message.channel.bulkDelete(amount + 1, true); // +1 to include the command message
-      const confirmation = await message.channel.send(`✅ נמחקו ${amount} הודעות.`);
+      // Fetch messages and filter only user messages (not from bots)
+      const messages = await message.channel.messages.fetch({ limit: amount + 1 });
+      const userMessages = messages.filter(m => !m.author.bot).first(amount);
+      
+      if (userMessages.size === 0) {
+        return message.reply('❌ לא מצאתי הודעות למחיקה.');
+      }
+
+      await message.channel.bulkDelete(userMessages, true);
+      const confirmation = await message.channel.send(`✅ נמחקו ${userMessages.size} הודעות.`);
       
       // Log clear command
       await sendLog(
         '🗑️ מחיקת הודעות',
-        `**משתמש:** <@${userId}>\n**כמות:** ${amount}\n**ערוץ:** <#${message.channelId}>`,
+        `**משתמש:** <@${userId}>\n**כמות:** ${userMessages.size}\n**ערוץ:** <#${message.channelId}>`,
         0xE74C3C
       );
     } catch (err) {
