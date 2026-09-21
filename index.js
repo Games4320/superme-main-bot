@@ -2558,20 +2558,20 @@ client.on(Events.MessageCreate, async message => {
 
     try {
       // Fetch messages and filter only user messages (not from bots)
-      const messages = await message.channel.messages.fetch({ limit: amount + 1 });
-      const userMessages = messages.filter(m => !m.author.bot).first(amount);
+      const messages = await message.channel.messages.fetch({ limit: amount + 10 });
+      const userMessagesArray = messages.filter(m => !m.author.bot).reverse().slice(0, amount);
       
-      if (userMessages.size === 0) {
+      if (userMessagesArray.size === 0) {
         return message.reply('❌ לא מצאתי הודעות למחיקה.');
       }
 
-      await message.channel.bulkDelete(userMessages, true);
-      const confirmation = await message.channel.send(`✅ נמחקו ${userMessages.size} הודעות.`);
+      await message.channel.bulkDelete(userMessagesArray, true);
+      const confirmation = await message.channel.send(`✅ נמחקו ${userMessagesArray.size} הודעות.`);
       
       // Log clear command
       await sendLog(
         '🗑️ מחיקת הודעות',
-        `**משתמש:** <@${userId}>\n**כמות:** ${userMessages.size}\n**ערוץ:** <#${message.channelId}>`,
+        `**משתמש:** <@${userId}>\n**כמות:** ${userMessagesArray.size}\n**ערוץ:** <#${message.channelId}>`,
         0xE74C3C
       );
     } catch (err) {
