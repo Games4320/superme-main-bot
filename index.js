@@ -799,7 +799,7 @@ client.on(Events.InteractionCreate, async interaction => {
         let deletedCount = 0;
 
         // Delete all ticket channels
-        for (const [channelId, ticketData] of openTickets.entries()) {
+        for (const [channelId, ticketData] of Object.entries(openTicketsData)) {
           try {
             const channel = await guild.channels.fetch(channelId);
             if (channel) {
@@ -837,7 +837,8 @@ client.on(Events.InteractionCreate, async interaction => {
           });
 
           ticketCategoryId = newCategory.id;
-          openTickets.clear();
+          openTicketsData = {};
+          saveData('openTickets.json', openTicketsData);
 
           await sendLog(
             '🗑️ מחיקת כל הטיקטים',
@@ -1163,7 +1164,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       // Check if user already has an open ticket
       let userHasOpenTicket = false;
-      for (const [channelId, ticketData] of openTickets.entries()) {
+      for (const [channelId, ticketData] of Object.entries(openTicketsData)) {
         if (ticketData.userId === userId) {
           userHasOpenTicket = true;
           await interaction.editReply({ content: `❌ אתה כבר יש לך טיקט פתוח! <#${channelId}>` });
@@ -2067,7 +2068,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     try {
       // Check if user already has an open exam ticket
-      const existingTicket = Array.from(openTickets.values()).find(
+      const existingTicket = Object.values(openTicketsData).find(
         ticket => ticket.createdBy === interaction.user.id && ticket.category === 'staff_exam'
       );
 
@@ -2846,7 +2847,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
     }
 
     // Check if user already has an open exam ticket
-    const existingTicket = Array.from(openTickets.values()).find(
+    const existingTicket = Object.values(openTicketsData).find(
       ticket => ticket.createdBy === user.id && ticket.category === 'staff_exam'
     );
 
