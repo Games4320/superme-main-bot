@@ -115,6 +115,67 @@ const userMutes = new Map();
 let ticketCategoryId = null;
 let autoRoleId = null; // Store the auto-role ID
 
+// Helper functions for persistent data
+function getUserXP(userId) {
+  return parseInt(userXPData[userId] || 0);
+}
+
+function setUserXP(userId, amount) {
+  userXPData[userId] = amount;
+  saveData('userXP.json', userXPData);
+}
+
+function addUserXP(userId, amount) {
+  setUserXP(userId, getUserXP(userId) + amount);
+}
+
+function getTicketData(channelId) {
+  return openTicketsData[channelId];
+}
+
+function setTicketData(channelId, data) {
+  openTicketsData[channelId] = data;
+  saveData('openTickets.json', openTicketsData);
+}
+
+function deleteTicketData(channelId) {
+  delete openTicketsData[channelId];
+  saveData('openTickets.json', openTicketsData);
+}
+
+function getWarnings(userId) {
+  return userWarningsData[userId] || [];
+}
+
+function addWarning(userId, warning) {
+  if (!userWarningsData[userId]) {
+    userWarningsData[userId] = [];
+  }
+  userWarningsData[userId].push(warning);
+  saveData('userWarnings.json', userWarningsData);
+}
+
+function getPurchasedRoles(userId) {
+  return purchasedRolesData[userId] || [];
+}
+
+function addPurchasedRole(userId, roleId) {
+  if (!purchasedRolesData[userId]) {
+    purchasedRolesData[userId] = [];
+  }
+  if (!purchasedRolesData[userId].includes(roleId)) {
+    purchasedRolesData[userId].push(roleId);
+  }
+  saveData('purchasedRoles.json', purchasedRolesData);
+}
+
+function removePurchasedRole(userId, roleId) {
+  if (purchasedRolesData[userId]) {
+    purchasedRolesData[userId] = purchasedRolesData[userId].filter(r => r !== roleId);
+    saveData('purchasedRoles.json', purchasedRolesData);
+  }
+}
+
 const SPAM_THRESHOLD = 5; // 5 messages
 const SPAM_TIME_WINDOW = 5000; // in 5 seconds
 const MANAGER_ROLE_ID = '1541492934405398535';
