@@ -616,8 +616,8 @@ client.once(Events.ClientReady, async () => {
       
       if (elapsedMinutes > 0) {
         const xpToAdd = elapsedMinutes * XP_PER_VOICE_MINUTE;
-        const currentXp = userXP.get(userId) || 0;
-        userXP.set(userId, currentXp + xpToAdd);
+        const currentXp = getUserXP(userId) || 0;
+        setUserXP(userId, currentXp + xpToAdd);
         voiceSessions.set(userId, now);
         console.log(`Added ${xpToAdd} XP to ${userId} for voice activity`);
       }
@@ -740,9 +740,9 @@ client.on(Events.InteractionCreate, async interaction => {
           return;
         }
 
-        const currentXp = userXP.get(user.id) || 0;
+        const currentXp = getUserXP(user.id) || 0;
         const newXp = Math.max(0, currentXp - amount);
-        userXP.set(user.id, newXp);
+        setUserXP(user.id, newXp);
 
         // Log remxp command
         await sendLog(
@@ -1242,7 +1242,7 @@ client.on(Events.InteractionCreate, async interaction => {
           allowedMentions: { parse: ['users', 'roles'], repliedUser: false }
         });
 
-        openTickets.set(ticketChannel.id, {
+        setTicketData(ticketChannel.id, {
           userId: userId,
           channelId: ticketChannel.id,
           claimed: false,
@@ -1284,7 +1284,7 @@ client.on(Events.InteractionCreate, async interaction => {
         return;
       }
 
-      const userXpAmount = userXP.get(userId) || 0;
+      const userXpAmount = getUserXP(userId) || 0;
       if (userXpAmount < roleConfig.cost) {
         await interaction.editReply({ content: `❌ אין לך מספיק אקספי! אתה צריך ${roleConfig.cost} אקספי וברשותך ${userXpAmount}.` });
         return;
@@ -1297,7 +1297,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       try {
         await member.roles.add(roleId);
-        userXP.set(userId, userXpAmount - roleConfig.cost);
+        setUserXP(userId, userXpAmount - roleConfig.cost);
         
         if (!purchasedRoles.has(userId)) {
           purchasedRoles.set(userId, new Set());
@@ -1338,8 +1338,8 @@ client.on(Events.InteractionCreate, async interaction => {
       try {
         await member.roles.remove(roleId);
         
-        const userXpAmount = userXP.get(userId) || 0;
-        userXP.set(userId, userXpAmount + roleConfig.cost);
+        const userXpAmount = getUserXP(userId) || 0;
+        setUserXP(userId, userXpAmount + roleConfig.cost);
         
         if (purchasedRoles.has(userId)) {
           purchasedRoles.get(userId).delete(roleId);
@@ -1363,7 +1363,7 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply({ ephemeral: true }).catch(() => {});
 
     const channelId = customId.replace('ticket_claim_', '');
-    const ticketData = openTickets.get(channelId);
+    const ticketData = getTicketData(channelId);
 
     if (!ticketData) {
       await interaction.editReply({ content: 'הטיקט לא קיים עוד.' });
@@ -1436,7 +1436,7 @@ client.on(Events.InteractionCreate, async interaction => {
     await interaction.deferReply({ ephemeral: true }).catch(() => {});
 
     const channelId = customId.replace('exam_claim_', '');
-    const ticketData = openTickets.get(channelId);
+    const ticketData = getTicketData(channelId);
 
     if (!ticketData) {
       await interaction.editReply({ content: 'הבחינה לא קיימת עוד.' });
@@ -1569,9 +1569,9 @@ client.on(Events.InteractionCreate, async interaction => {
       setTimeout(async () => {
         try {
           await channel.delete();
-          const ticketData = openTickets.get(channelId);
+          const ticketData = getTicketData(channelId);
           if (ticketData) {
-            openTickets.delete(channelId);
+            deleteTicketData(channelId);
           }
           console.log(`✅ Ticket ${channelId} closed and deleted`);
           
@@ -1598,7 +1598,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     const channelId = customId.replace('exam_close_', '');
     const channel = client.channels.cache.get(channelId);
-    const ticketData = openTickets.get(channelId);
+    const ticketData = getTicketData(channelId);
 
     if (!ticketData) {
       await interaction.editReply({ content: '❌ לא נמצאה בחינה זו.' });
@@ -1621,7 +1621,7 @@ client.on(Events.InteractionCreate, async interaction => {
       setTimeout(async () => {
         try {
           await channel.delete();
-          openTickets.delete(channelId);
+          deleteTicketData(channelId);
           console.log(`✅ Exam ${channelId} closed and deleted`);
           
           // Log exam closed
@@ -1678,7 +1678,7 @@ client.on(Events.InteractionCreate, async interaction => {
         ReadMessageHistory: true,
       });
 
-      const ticketData = openTickets.get(channelId);
+      const ticketData = getTicketData(channelId);
       if (ticketData) {
         ticketData.participants.push(member.id);
       }
@@ -1730,7 +1730,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
       await channel.permissionOverwrites.delete(member.id);
 
-      const ticketData = openTickets.get(channelId);
+      const ticketData = getTicketData(channelId);
       if (ticketData) {
         ticketData.participants = ticketData.participants.filter(id => id !== member.id);
       }
@@ -2163,7 +2163,7 @@ client.on(Events.InteractionCreate, async interaction => {
         createdAt: Date.now(),
         claimed: false
       };
-      openTickets.set(ticketChannel.id, ticketData);
+      setTicketData(ticketChannel.id, ticketData);
 
       await interaction.editReply({ content: `✅ בחינה נפתחה בהצלחה ב <#${ticketChannel.id}>` });
 
@@ -2372,8 +2372,8 @@ client.on(Events.VoiceStateUpdate, (oldState, newState) => {
       
       if (elapsedMinutes > 0) {
         const xpToAdd = elapsedMinutes * XP_PER_VOICE_MINUTE;
-        const currentXp = userXP.get(userId) || 0;
-        userXP.set(userId, currentXp + xpToAdd);
+        const currentXp = getUserXP(userId) || 0;
+        setUserXP(userId, currentXp + xpToAdd);
         console.log(`Added ${xpToAdd} XP to ${userId} for voice (${elapsedMinutes} minutes)`);
       }
 
@@ -2405,8 +2405,8 @@ client.on(Events.MessageCreate, async message => {
 
   // XP system - message XP (only give XP if not in XP_CHECK_CHANNEL)
   if (message.channelId !== XP_CHECK_CHANNEL_ID) {
-    const currentXp = userXP.get(userId) || 0;
-    userXP.set(userId, currentXp + XP_PER_MESSAGE);
+    const currentXp = getUserXP(userId) || 0;
+    setUserXP(userId, currentXp + XP_PER_MESSAGE);
     console.log(`Added ${XP_PER_MESSAGE} XP to ${userId} for message`);
   }
 
@@ -2599,7 +2599,7 @@ client.on(Events.MessageCreate, async message => {
       }
     }
 
-    const xpAmount = userXP.get(targetId) || 0;
+    const xpAmount = getUserXP(targetId) || 0;
     const user = await client.users.fetch(targetId).catch(() => null);
     const username = user ? user.username : 'Unknown User';
 
@@ -2956,7 +2956,7 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
       createdAt: Date.now(),
       claimed: false
     };
-    openTickets.set(ticketChannel.id, ticketData);
+    setTicketData(ticketChannel.id, ticketData);
 
     // Send DM confirmation
     try {
