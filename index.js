@@ -1,4 +1,3 @@
-require('dotenv').config();
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType, Events, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
 const fs = require('fs');
 const path = require('path');
@@ -32,24 +31,24 @@ function saveData(filename, data) {
   }
 }
 
-// Load from environment variables first, fall back to hardcoded values
-let token = process.env.TOKEN || 'MTU1MDM2NjU5NzI2MzI2NTc5Mg.Gibvd5.qm77c1_3vE_hKcYwlBFQBIHznssFjRVZHPrRsQ';
-let staffRoleId = process.env.staffRoleId || '1541492934329761880';
-let highStaffRoleId = process.env.highStaffRoleId || '1541492934376165398';
-
-console.log('🔍 Checking environment variables...');
-console.log('TOKEN exists:', !!process.env.TOKEN);
-console.log('staffRoleId exists:', !!process.env.staffRoleId);
-console.log('highStaffRoleId exists:', !!process.env.highStaffRoleId);
-
-if (process.env.TOKEN) {
-  console.log('✅ Using environment variables');
-} else {
-  console.log('⚠️ Using hardcoded fallback configuration');
+// Load configuration from config.json
+let config;
+try {
+  const configPath = path.join(__dirname, 'config.json');
+  const configData = fs.readFileSync(configPath, 'utf8');
+  config = JSON.parse(configData);
+  console.log('✅ Configuration loaded from config.json');
+} catch (err) {
+  console.error('❌ FATAL: Could not load config.json:', err.message);
+  process.exit(1);
 }
 
+const token = config.token;
+const staffRoleId = config.staffRoleId;
+const highStaffRoleId = config.highStaffRoleId;
+
 if (!token) {
-  console.error('❌ FATAL: No token found! Bot cannot start.');
+  console.error('❌ FATAL: No token found in config.json!');
   process.exit(1);
 }
 
