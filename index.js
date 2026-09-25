@@ -36,21 +36,34 @@ let token = process.env.TOKEN;
 let staffRoleId = process.env.staffRoleId;
 let highStaffRoleId = process.env.highStaffRoleId;
 
+console.log('🔍 Checking environment variables...');
+console.log('TOKEN exists:', !!process.env.TOKEN);
+console.log('staffRoleId exists:', !!process.env.staffRoleId);
+console.log('highStaffRoleId exists:', !!process.env.highStaffRoleId);
+
 if (process.env.TOKEN) {
   // Running on Railway or similar
+  console.log('✅ Using environment variables');
   token = process.env.TOKEN;
   staffRoleId = process.env.staffRoleId;
   highStaffRoleId = process.env.highStaffRoleId;
 } else {
   // Running locally - try to load config.json safely if it exists
+  console.log('⚠️ TOKEN not in environment, trying config.json...');
   try {
     const config = require('./config.json');
     token = config.token;
     staffRoleId = config.staffRoleId;
     highStaffRoleId = config.highStaffRoleId;
+    console.log('✅ Loaded from config.json');
   } catch (err) {
-    console.log('⚠️ קובץ config.json לא נמצא, משתמש רק ב-Environment Variables.');
+    console.log('❌ קובץ config.json לא נמצא, משתמש רק ב-Environment Variables.');
   }
+}
+
+if (!token) {
+  console.error('❌ FATAL: No token found! Bot cannot start.');
+  process.exit(1);
 }
 
 
