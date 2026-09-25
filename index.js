@@ -1,4 +1,35 @@
 const { Client, GatewayIntentBits, EmbedBuilder, ActionRowBuilder, ButtonBuilder, StringSelectMenuBuilder, ModalBuilder, TextInputBuilder, TextInputStyle, ChannelType, Events, PermissionFlagsBits, SlashCommandBuilder } = require('discord.js');
+const fs = require('fs');
+const path = require('path');
+
+// Data directory for persistence
+const DATA_DIR = path.join(__dirname, 'data');
+if (!fs.existsSync(DATA_DIR)) {
+  fs.mkdirSync(DATA_DIR, { recursive: true });
+}
+
+// Helper functions for data persistence
+function loadData(filename) {
+  try {
+    const filePath = path.join(DATA_DIR, filename);
+    if (fs.existsSync(filePath)) {
+      const data = fs.readFileSync(filePath, 'utf8');
+      return JSON.parse(data);
+    }
+  } catch (err) {
+    console.error(`Failed to load ${filename}:`, err);
+  }
+  return null;
+}
+
+function saveData(filename, data) {
+  try {
+    const filePath = path.join(DATA_DIR, filename);
+    fs.writeFileSync(filePath, JSON.stringify(data, null, 2), 'utf8');
+  } catch (err) {
+    console.error(`Failed to save ${filename}:`, err);
+  }
+}
 
 // Load from environment variables first, fall back to config.json safely
 let token = process.env.TOKEN;
@@ -67,17 +98,20 @@ const client = new Client({
   ]
 });
 
+// Load persistent data from files
+let userXPData = loadData('userXP.json') || {};
+let openTicketsData = loadData('openTickets.json') || {};
+let purchasedRolesData = loadData('purchasedRoles.json') || {};
+let userWarningsData = loadData('userWarnings.json') || {};
+let activeGiveawaysData = loadData('activeGiveaways.json') || {};
+
+// Runtime maps (session-based, will be repopulated from data)
 const helpClaims = new Map();
 const cooldowns = new Map();
-const userXP = new Map();
 const voiceSessions = new Map();
-const purchasedRoles = new Map();
-const openTickets = new Map();
-const ageCheckClaims = new Map(); // Track age check claims
-const messageTimestamps = new Map(); // Track messages per user for spam detection
-const userWarnings = new Map(); // Track warnings per user
-const userMutes = new Map(); // Track active mutes
-const activeGiveaways = new Map(); // Track active giveaways
+const ageCheckClaims = new Map();
+const messageTimestamps = new Map();
+const userMutes = new Map();
 let ticketCategoryId = null;
 let autoRoleId = null; // Store the auto-role ID
 
@@ -609,8 +643,9 @@ client.on(Events.InteractionCreate, async interaction => {
           return;
         }
 
-        const currentXp = userXP.get(user.id) || 0;
-        userXP.set(user.id, currentXp + amount);
+        const currentXp = parseInt(userXPData[user.id] || 0);
+        userXPData[user.id] = currentXp + amount;
+        saveData('userXP.json', userXPData);
 
         // Log addxp command
         await sendLog(
