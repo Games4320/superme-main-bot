@@ -2880,33 +2880,24 @@ console.log('Token available:', token ? 'YES' : 'NO');
 console.log('Token length:', token ? token.length : 0);
 console.log('Token first 20 chars:', token ? token.substring(0, 20) + '...' : 'N/A');
 
-// Create a timeout promise
-const loginTimeout = new Promise((_, reject) => {
-  setTimeout(() => reject(new Error('Login timeout after 30 seconds')), 30000);
+// Start the login process
+client.login(token).catch(err => {
+  console.error('❌ Failed to login to Discord:', err);
+  console.error('Error name:', err.name);
+  console.error('Error message:', err.message);
+  console.error('Error code:', err.code);
+  process.exit(1);
 });
 
-// Race between login and timeout
-Promise.race([client.login(token), loginTimeout])
-  .then(() => {
-    console.log('✅ Login successful, starting health check server...');
-    
-    // Listen on a port for Render health checks - AFTER successful login
-    const PORT = process.env.PORT || 3000;
-    require('http').createServer((req, res) => {
-      res.writeHead(200);
-      res.end('Bot is running');
-    }).listen(PORT, () => {
-      console.log(`Health check server listening on port ${PORT}`);
-    });
-  })
-  .catch(err => {
-    console.error('❌ Failed to login to Discord:', err);
-    console.error('Error name:', err.name);
-    console.error('Error message:', err.message);
-    console.error('Error code:', err.code);
-    console.error('Full error:', JSON.stringify(err, null, 2));
-    process.exit(1);
-  });
+// Start health check server immediately (don't wait for Discord login)
+// This prevents Render from thinking the service is down
+const PORT = process.env.PORT || 3000;
+require('http').createServer((req, res) => {
+  res.writeHead(200);
+  res.end('Bot is running');
+}).listen(PORT, () => {
+  console.log(`Health check server listening on port ${PORT}`);
+});
 
 // Message Reaction Add - for exam emoji
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
