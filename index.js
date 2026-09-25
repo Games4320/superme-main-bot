@@ -638,7 +638,7 @@ client.on(Events.InteractionCreate, async interaction => {
   if (interaction.isChatInputCommand()) {
     if (interaction.commandName === 'xpshopsend') {
       try {
-        await interaction.deferReply({ ephemeral: true }).catch(() => {});
+        await interaction.deferReply({ ephemeral: true }).catch(err => console.error('Defer error:', err));
 
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
           await interaction.editReply({ content: 'רק אדמינים יכולים להשתמש בפקודה הזו.' });
@@ -698,7 +698,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === 'addxp') {
       try {
-        await interaction.deferReply({ ephemeral: true }).catch(() => {});
+        await interaction.deferReply({ ephemeral: true }).catch(err => console.error('Defer error:', err));
 
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
           await interaction.editReply({ content: 'רק אדמינים יכולים להשתמש בפקודה הזו.' });
@@ -734,7 +734,7 @@ client.on(Events.InteractionCreate, async interaction => {
 
     if (interaction.commandName === 'remxp') {
       try {
-        await interaction.deferReply({ ephemeral: true }).catch(() => {});
+        await interaction.deferReply({ ephemeral: true }).catch(err => console.error('Defer error:', err));
 
         if (!interaction.member.permissions.has(PermissionFlagsBits.Administrator)) {
           await interaction.editReply({ content: 'רק אדמינים יכולים להשתמש בפקודה הזו.' });
