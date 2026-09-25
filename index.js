@@ -301,6 +301,7 @@ async function endGiveaway(giveawayId, guild) {
 }
 
 client.once(Events.ClientReady, async () => {
+  try {
   console.log(`Bot connected as: ${client.user.tag}`);
   
   // Set bot status to DND (Do Not Disturb)
@@ -629,6 +630,11 @@ client.once(Events.ClientReady, async () => {
       }
     });
   }, VOICE_XP_INTERVAL);
+  
+  } catch (err) {
+    console.error('❌ Fatal error in ClientReady:', err);
+    process.exit(1);
+  }
 });
 
 client.on(Events.InteractionCreate, async interaction => {
