@@ -2874,13 +2874,19 @@ client.on('warn', (info) => {
   console.warn('⚠️ Discord client warning:', info);
 });
 
-// Login with error handling
+// Login with error handling and timeout
 console.log('Attempting to login to Discord...');
 console.log('Token available:', token ? 'YES' : 'NO');
 console.log('Token length:', token ? token.length : 0);
 console.log('Token first 20 chars:', token ? token.substring(0, 20) + '...' : 'N/A');
 
-client.login(token)
+// Create a timeout promise
+const loginTimeout = new Promise((_, reject) => {
+  setTimeout(() => reject(new Error('Login timeout after 30 seconds')), 30000);
+});
+
+// Race between login and timeout
+Promise.race([client.login(token), loginTimeout])
   .then(() => {
     console.log('✅ Login successful, starting health check server...');
     
@@ -2898,6 +2904,7 @@ client.login(token)
     console.error('Error name:', err.name);
     console.error('Error message:', err.message);
     console.error('Error code:', err.code);
+    console.error('Full error:', JSON.stringify(err, null, 2));
     process.exit(1);
   });
 
