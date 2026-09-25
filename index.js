@@ -48,19 +48,8 @@ if (process.env.TOKEN) {
   staffRoleId = process.env.staffRoleId;
   highStaffRoleId = process.env.highStaffRoleId;
 } else {
-  // Running with hardcoded values or config.json
+  // Running with hardcoded values
   console.log('⚠️ Using hardcoded configuration');
-  try {
-    const config = require('./config.json');
-    if (config.token) {
-      token = config.token;
-      staffRoleId = config.staffRoleId;
-      highStaffRoleId = config.highStaffRoleId;
-      console.log('✅ Loaded from config.json');
-    }
-  } catch (err) {
-    console.log('⚠️ config.json not found, using hardcoded values');
-  }
 }
 
 if (!token) {
