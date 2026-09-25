@@ -626,6 +626,9 @@ client.once(Events.ClientReady, async () => {
 });
 
 client.on(Events.InteractionCreate, async interaction => {
+  try {
+    console.log(`[InteractionCreate] Type: ${interaction.type}, CustomId: ${interaction.customId || interaction.commandName || 'N/A'}`);
+    
   if (interaction.isChatInputCommand()) {
     if (interaction.commandName === 'xpshopsend') {
       try {
@@ -873,10 +876,7 @@ client.on(Events.InteractionCreate, async interaction => {
         const duration = interaction.options.getInteger('duration');
         const reason = interaction.options.getString('reason');
 
-        if (!userWarnings.has(targetUser.id)) {
-          userWarnings.set(targetUser.id, []);
-        }
-
+        // Warning is added via addWarning function which handles persistence
         addWarning(targetUser.id, {
           moderator: interaction.user.id,
           reason: reason,
@@ -2285,6 +2285,18 @@ client.on(Events.InteractionCreate, async interaction => {
     }, 500);
     
     return;
+  }
+  } catch (err) {
+    console.error('[InteractionCreate] Fatal error:', err);
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: 'אירעה שגיאה בעיבוד הבקשה.', ephemeral: true }).catch(() => {});
+      } else if (interaction.deferred) {
+        await interaction.editReply({ content: 'אירעה שגיאה בעיבוד הבקשה.' }).catch(() => {});
+      }
+    } catch (replyErr) {
+      console.error('[InteractionCreate] Failed to send error message:', replyErr);
+    }
   }
 });
 
