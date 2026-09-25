@@ -32,9 +32,9 @@ function saveData(filename, data) {
 }
 
 // Load from environment variables first, fall back to config.json safely
-let token = process.env.TOKEN || 'MTU1MDM2NjU5NzI2MzI2NTc5Mg.Gibvd5.qm77c1_3vE_hKcYwlBFQBIHznssFjRVZHPrRsQ';
-let staffRoleId = process.env.staffRoleId || '1541492934329761880';
-let highStaffRoleId = process.env.highStaffRoleId || '1541492934376165398';
+let token = process.env.TOKEN;
+let staffRoleId = process.env.staffRoleId;
+let highStaffRoleId = process.env.highStaffRoleId;
 
 console.log('🔍 Checking environment variables...');
 console.log('TOKEN exists:', !!process.env.TOKEN);
