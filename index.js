@@ -32,7 +32,7 @@ function saveData(filename, data) {
 }
 
 // Load from environment variables first, fall back to config.json safely
-let token = process.env.TOKEN || 'MTU1MDM2NjU5NzI2MzI2NTc5Mg.G8EvBu.x8EECr0w-QrbIHaG3GVb76Phf0zX1wxMvbCD9Y';
+let token = process.env.TOKEN || 'MTU1MDM2NjU5NzI2MzI2NTc5Mg.Gibvd5.qm77c1_3vE_hKcYwlBFQBIHznssFjRVZHPrRsQ';
 let staffRoleId = process.env.staffRoleId || '1541492934329761880';
 let highStaffRoleId = process.env.highStaffRoleId || '1541492934376165398';
 
