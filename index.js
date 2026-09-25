@@ -2837,7 +2837,15 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
-client.login(token);
+// Login with error handling
+console.log('Attempting to login to Discord...');
+console.log('Token available:', token ? 'YES' : 'NO');
+console.log('Token length:', token ? token.length : 0);
+
+client.login(token).catch(err => {
+  console.error('❌ Failed to login to Discord:', err);
+  process.exit(1);
+});
 
 // Message Reaction Add - for exam emoji
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
@@ -2993,6 +3001,24 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
   } catch (err) {
     console.error('Error in exam_start:', err);
   }
+});
+
+// Global error handlers
+process.on('unhandledRejection', (error) => {
+  console.error('❌ Unhandled promise rejection:', error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught exception:', error);
+  process.exit(1);
+});
+
+client.on('error', (error) => {
+  console.error('❌ Discord client error:', error);
+});
+
+client.on('warn', (info) => {
+  console.warn('⚠️ Discord client warning:', info);
 });
 
 // Listen on a port for Render health checks
