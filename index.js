@@ -876,7 +876,7 @@ client.on(Events.InteractionCreate, async interaction => {
           userWarnings.set(targetUser.id, []);
         }
 
-        userWarnings.get(targetUser.id).push({
+        addWarning(targetUser.id, {
           moderator: interaction.user.id,
           reason: reason,
           timestamp: Date.now()
@@ -886,11 +886,11 @@ client.on(Events.InteractionCreate, async interaction => {
 
         await sendLog(
           '⚠️ אזהרה',
-          `**משתמש:** <@${targetUser.id}>\n**סיבה:** ${reason}\n**משך זמן:** ${duration > 0 ? duration + ' דקות' : 'קבוע'}\n**על ידי:** <@${interaction.user.id}>\n**סה"כ אזהרות:** ${userWarnings.get(targetUser.id).length}`,
+          `**משתמש:** <@${targetUser.id}>\n**סיבה:** ${reason}\n**משך זמן:** ${duration > 0 ? duration + ' דקות' : 'קבוע'}\n**על ידי:** <@${interaction.user.id}>\n**סה"כ אזהרות:** ${getWarnings(targetUser.id).length}`,
           0xFF6B00
         );
 
-        await interaction.editReply({ content: `✅ אזהרה ניתנה ל-<@${targetUser.id}>! (אזהרה #${userWarnings.get(targetUser.id).length})` });
+        await interaction.editReply({ content: `✅ אזהרה ניתנה ל-<@${targetUser.id}>! (אזהרה #${getWarnings(targetUser.id).length})` });
       } catch (err) {
         console.error('Error in warn command:', err);
         await interaction.editReply({ content: 'אירעה שגיאה בעת ביצוע הפקודה.' }).catch(() => {});
@@ -1299,10 +1299,9 @@ client.on(Events.InteractionCreate, async interaction => {
         await member.roles.add(roleId);
         setUserXP(userId, userXpAmount - roleConfig.cost);
         
-        if (!purchasedRoles.has(userId)) {
-          purchasedRoles.set(userId, new Set());
+        if (!getPurchasedRoles(userId).includes(roleId)) {
+          addPurchasedRole(userId, roleId);
         }
-        purchasedRoles.get(userId).add(roleId);
 
         await interaction.editReply({ content: `✅ קנית בהצלחה את הרול <@&${roleId}>! הוחסרו ${roleConfig.cost} אקספי. XP שנותר: ${userXpAmount - roleConfig.cost}` });
       } catch (err) {
@@ -1341,8 +1340,8 @@ client.on(Events.InteractionCreate, async interaction => {
         const userXpAmount = getUserXP(userId) || 0;
         setUserXP(userId, userXpAmount + roleConfig.cost);
         
-        if (purchasedRoles.has(userId)) {
-          purchasedRoles.get(userId).delete(roleId);
+        if (getPurchasedRoles(userId).includes(roleId)) {
+          removePurchasedRole(userId, roleId);
         }
 
         await interaction.editReply({ content: `✅ החזרת בהצלחה את הרול <@&${roleId}>! קיבלת חזרה ${roleConfig.cost} אקספי. XP כללי: ${userXpAmount + roleConfig.cost}` });
