@@ -2856,15 +2856,50 @@ client.on(Events.MessageCreate, async message => {
   }
 });
 
+// Global error handlers
+process.on('unhandledRejection', (error) => {
+  console.error('❌ Unhandled promise rejection:', error);
+});
+
+process.on('uncaughtException', (error) => {
+  console.error('❌ Uncaught exception:', error);
+  process.exit(1);
+});
+
+client.on('error', (error) => {
+  console.error('❌ Discord client error:', error);
+});
+
+client.on('warn', (info) => {
+  console.warn('⚠️ Discord client warning:', info);
+});
+
 // Login with error handling
 console.log('Attempting to login to Discord...');
 console.log('Token available:', token ? 'YES' : 'NO');
 console.log('Token length:', token ? token.length : 0);
+console.log('Token first 20 chars:', token ? token.substring(0, 20) + '...' : 'N/A');
 
-client.login(token).catch(err => {
-  console.error('❌ Failed to login to Discord:', err);
-  process.exit(1);
-});
+client.login(token)
+  .then(() => {
+    console.log('✅ Login successful, starting health check server...');
+    
+    // Listen on a port for Render health checks - AFTER successful login
+    const PORT = process.env.PORT || 3000;
+    require('http').createServer((req, res) => {
+      res.writeHead(200);
+      res.end('Bot is running');
+    }).listen(PORT, () => {
+      console.log(`Health check server listening on port ${PORT}`);
+    });
+  })
+  .catch(err => {
+    console.error('❌ Failed to login to Discord:', err);
+    console.error('Error name:', err.name);
+    console.error('Error message:', err.message);
+    console.error('Error code:', err.code);
+    process.exit(1);
+  });
 
 // Message Reaction Add - for exam emoji
 client.on(Events.MessageReactionAdd, async (reaction, user) => {
@@ -3020,31 +3055,4 @@ client.on(Events.MessageReactionAdd, async (reaction, user) => {
   } catch (err) {
     console.error('Error in exam_start:', err);
   }
-});
-
-// Global error handlers
-process.on('unhandledRejection', (error) => {
-  console.error('❌ Unhandled promise rejection:', error);
-});
-
-process.on('uncaughtException', (error) => {
-  console.error('❌ Uncaught exception:', error);
-  process.exit(1);
-});
-
-client.on('error', (error) => {
-  console.error('❌ Discord client error:', error);
-});
-
-client.on('warn', (info) => {
-  console.warn('⚠️ Discord client warning:', info);
-});
-
-// Listen on a port for Render health checks
-const PORT = process.env.PORT || 3000;
-require('http').createServer((req, res) => {
-  res.writeHead(200);
-  res.end('Bot is running');
-}).listen(PORT, () => {
-  console.log(`Health check server listening on port ${PORT}`);
 });
