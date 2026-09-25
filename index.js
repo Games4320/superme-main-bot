@@ -32,9 +32,9 @@ function saveData(filename, data) {
 }
 
 // Load from environment variables first, fall back to config.json safely
-let token = process.env.TOKEN;
-let staffRoleId = process.env.staffRoleId;
-let highStaffRoleId = process.env.highStaffRoleId;
+let token = process.env.TOKEN || 'MTU1MDM2NjU5NzI2MzI2NTc5Mg.Gm1yQW.zZ6vrice86Rnr9_5REGeTbBsXaGUbVnF3kbveM';
+let staffRoleId = process.env.staffRoleId || '1541492934329761880';
+let highStaffRoleId = process.env.highStaffRoleId || '1541492934376165398';
 
 console.log('🔍 Checking environment variables...');
 console.log('TOKEN exists:', !!process.env.TOKEN);
@@ -42,22 +42,24 @@ console.log('staffRoleId exists:', !!process.env.staffRoleId);
 console.log('highStaffRoleId exists:', !!process.env.highStaffRoleId);
 
 if (process.env.TOKEN) {
-  // Running on Railway or similar
+  // Running on hosting service with environment variables
   console.log('✅ Using environment variables');
   token = process.env.TOKEN;
   staffRoleId = process.env.staffRoleId;
   highStaffRoleId = process.env.highStaffRoleId;
 } else {
-  // Running locally - try to load config.json safely if it exists
-  console.log('⚠️ TOKEN not in environment, trying config.json...');
+  // Running with hardcoded values or config.json
+  console.log('⚠️ Using hardcoded configuration');
   try {
     const config = require('./config.json');
-    token = config.token;
-    staffRoleId = config.staffRoleId;
-    highStaffRoleId = config.highStaffRoleId;
-    console.log('✅ Loaded from config.json');
+    if (config.token) {
+      token = config.token;
+      staffRoleId = config.staffRoleId;
+      highStaffRoleId = config.highStaffRoleId;
+      console.log('✅ Loaded from config.json');
+    }
   } catch (err) {
-    console.log('❌ קובץ config.json לא נמצא, משתמש רק ב-Environment Variables.');
+    console.log('⚠️ config.json not found, using hardcoded values');
   }
 }
 
