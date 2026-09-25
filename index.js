@@ -303,6 +303,12 @@ async function endGiveaway(giveawayId, guild) {
 client.once(Events.ClientReady, async () => {
   console.log(`Bot connected as: ${client.user.tag}`);
   
+  // Set bot status to DND (Do Not Disturb)
+  client.user.setPresence({
+    status: 'dnd',
+    activities: []
+  });
+  
   try {
     const commands = [
       new SlashCommandBuilder()
